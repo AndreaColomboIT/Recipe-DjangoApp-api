@@ -4,6 +4,4 @@ exlude =
     ./app/__pycache__,
     ./app/manage.py,
     ./app/settings.py
-
-[flake8]
 max-line-length = 100
