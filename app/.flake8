@@ -4,3 +4,5 @@ exlude =
     ./app/__pycache__,
     ./app/manage.py,
     ./app/settings.py
+
+ --max-line-length=~95-100
