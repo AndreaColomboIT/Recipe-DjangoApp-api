@@ -5,4 +5,5 @@ exlude =
     ./app/manage.py,
     ./app/settings.py
 
- --max-line-length=~95-100
+[flake8]
+max-line-length = 100
