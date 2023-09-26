@@ -6,16 +6,16 @@ from django.contrib.auth import get_user_model
 
 from core import models
 
+def create_user(**params):
+    """Create users"""
+    return get_user_model().objects.create_user(**params)
 class ModelTests(TestCase):
 
     def test_create_user_with_email_succesfull(self):
 
         email = 'test@example.com'
         password = 'password'
-        user = get_user_model().objects.create_user(
-            email = email,
-            password = password
-        )
+        user = create_user(email = email,password = password)
 
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))        
@@ -31,29 +31,23 @@ class ModelTests(TestCase):
         ]
 
         for email,expected in sample_emails:
-            user = get_user_model().objects.create_user(email, 'sample123')
+            user = create_user(email = email, password = 'sample123')
             self.assertEqual(user.email, expected)
 
-    def test_new_user_without_email_raises_error(self):
 
+    def test_new_user_without_email_raises_error(self):
         with self.assertRaises(ValueError):
-            get_user_model().objects.create_user('','test123')
+            create_user(email = '',password = 'test123')
+
 
     def test_create_superuser(self):
-        user = get_user_model().objects.create_superuser(
-            'test@example.com',
-            'testPass'
-        )
-
+        user = get_user_model().objects.create_superuser(email = 'super@example.com',password = 'SuperPass')
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
 
     def test_create_recipe(self):
-        user = get_user_model().objects.create_user(
-            'test@example.com',
-            'testPass'
-        )
+        user = create_user( email = 'test@example.com', password = 'testPass')
 
         recipe = models.Recipe.objects.create(
             user = user,
@@ -64,3 +58,9 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(str(recipe), recipe.title)
+
+
+    def test_create_tag(self):
+        user = create_user( email = 'test@example.com', password = 'testPass')
+        tag = models.Tag.objects.create(user = user, name = 'Tag1')
+        self.assertEqual(str(tag), tag.name)
