@@ -52,3 +52,4 @@ si aggiunge user UserAdmin per indicare che vogliamo anche le indicazioni fornit
 come per esempio l'order e la list_display
 """
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Recipe)
