@@ -66,3 +66,15 @@ class Tag(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+class Ingredient(models.Model):
+    """Ingredient model"""
+    user = models.ForeignKey(
+        # Same as giving core.User
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.name
