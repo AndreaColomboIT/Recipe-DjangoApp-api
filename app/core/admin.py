@@ -54,3 +54,4 @@ come per esempio l'order e la list_display
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Recipe)
 admin.site.register(models.Tag)
+admin.site.register(models.Ingredient)
