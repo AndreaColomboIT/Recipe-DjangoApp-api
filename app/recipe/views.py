@@ -9,7 +9,7 @@ from rest_framework import (
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import (Recipe, Tag)
+from core.models import (Recipe, Tag, Ingredient)
 from recipe import serializers
 
 
@@ -43,6 +43,22 @@ class TagsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Retrieve Tags for authenticated user"""
+        return self.queryset.filter(user = self.request.user).order_by('-name')
+
+    def perform_create(self, serializer):
+        """Override method to create a new Tag."""
+        serializer.save(user=self.request.user)
+
+
+class IngredientsViewSet(viewsets.ModelViewSet):
+    """View for manage Ingredients APIs"""
+    serializer_class = serializers.IngredientsSerializer
+    queryset = Ingredient.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        """Retrieve Ingredients for authenticated user"""
         return self.queryset.filter(user = self.request.user).order_by('-name')
 
     def perform_create(self, serializer):
