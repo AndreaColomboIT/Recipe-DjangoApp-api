@@ -13,7 +13,7 @@ from PIL import Image
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from core.models import (Recipe, Tag)
+from core.models import (Recipe, Tag, Ingredient)
 from recipe.serializers import (
     RecipeSerializer,
     RecipeDetailSerializer
@@ -240,6 +240,49 @@ class PrivateRecipeAPITests(TestCase):
         self.assertIn(new_tag, recipe.tags.all())
 
 
+    def test_filter_by_tags(self):
+        """Test filter recipe by tags"""
+        recipe_1 = create_recipe(user= self.user, title = 'Spaghetti pomodoro')
+        recipe_2 = create_recipe(user= self.user, title = 'Carbonara')
+        tag_1 = Tag.objects.create(user = self.user, name = 'Primo piatto tipico')
+        tag_2 = Tag.objects.create(user = self.user, name = 'Primo piatto romano')
+        recipe_1.tags.add(tag_1)
+        recipe_2.tags.add(tag_2)
+        recipe_3 = create_recipe(user= self.user, title = 'Pesce')
+
+        params = {'tags' : f'{tag_1.id},{tag_2.id}'}
+        res = self.client.get(RECIPE_URL, params)
+
+        s1 = RecipeSerializer(recipe_1)
+        s2 = RecipeSerializer(recipe_2)
+        s3 = RecipeSerializer(recipe_3)
+
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
+        self.assertNotIn(s3.data, res.data)
+
+
+    def test_filter_by_ingredients(self):
+        """Test filter recipe by tags"""
+        recipe_1 = create_recipe(user= self.user, title = 'Spaghetti pomodoro')
+        recipe_2 = create_recipe(user= self.user, title = 'Carbonara')
+        ing_1 = Ingredient.objects.create(user = self.user, name = 'Pasta')
+        ing_2 = Ingredient.objects.create(user = self.user, name = 'Pomodoro')
+        recipe_1.ingredients.add(ing_1)
+        recipe_2.ingredients.add(ing_2)
+        recipe_3 = create_recipe(user= self.user, title = 'Pesce')
+
+        params = {'ingredients' : f'{ing_1.id},{ing_2.id}'}
+        res = self.client.get(RECIPE_URL, params)
+
+        s1 = RecipeSerializer(recipe_1)
+        s2 = RecipeSerializer(recipe_2)
+        s3 = RecipeSerializer(recipe_3)
+
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
+        self.assertNotIn(s3.data, res.data)
+        
 class ImageUploadTests(TestCase):
     """Tests for the Image Upload API"""
 
